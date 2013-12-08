@@ -74,7 +74,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 // misc utility functions
 #include "collection.h"
 
-static int libusbmuxd_debug = 2;
+static int libusbmuxd_debug = 0;
 #define DEBUG(x, y, ...) if (x <= libusbmuxd_debug) fprintf(stderr, (y), __VA_ARGS__);
 
 static struct collection devices;
@@ -757,7 +757,7 @@ retry:
 
 	// receive device list
 	while (1) {
-		if (receive_packet(sfd, &hdr, &payload, 1000) > 0) {
+		if (receive_packet(sfd, &hdr, &payload, 100) > 0) {
 			if (hdr.message == MESSAGE_DEVICE_ADD) {
 				dev = payload;
 				usbmuxd_device_info_t *devinfo = (usbmuxd_device_info_t*)malloc(sizeof(usbmuxd_device_info_t));
