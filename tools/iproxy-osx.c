@@ -8,7 +8,7 @@
 #include <stdlib.h>			// EXIT_*
 #include <unistd.h>			// close
 #include <sys/event.h>		// kqueue
-#include "sock_stuff.h"
+#include "socket.h"
 #include "usbmuxd.h"
 
 /* TODO:
@@ -47,7 +47,7 @@ void *run_stoc_loop(void *arg)
 
     while (!cdata->stop_stoc && cdata->fd > 0 && cdata->sfd > 0) {
 		
-		recv_len = recv_buf_timeout(cdata->sfd, buffer, sizeof(buffer), 0, 5000);
+		recv_len = socket_receive_timeout(cdata->sfd, buffer, sizeof(buffer), 0, 5000);
 		if (recv_len <= 0) {
 			if (recv_len == 0) {
 				// try again
@@ -59,7 +59,7 @@ void *run_stoc_loop(void *arg)
 		} else {
 			//	    printf("received %d bytes from server\n", recv_len);
 			// send to socket
-			sent = send_buf(cdata->fd, buffer, recv_len);
+			sent = socket_send(cdata->fd, buffer, recv_len);
 			if (sent < recv_len) {
 				if (sent <= 0) {
 					asl_log(asl, log_msg, ASL_LEVEL_ERR, "send failed: (%d) %m\n", errno);
@@ -94,7 +94,7 @@ void *run_ctos_loop(void *arg)
 
     while (!cdata->stop_ctos && cdata->fd > 0 && cdata->sfd > 0) {
 		
-		recv_len = recv_buf_timeout(cdata->fd, buffer, sizeof(buffer), 0, 5000);
+		recv_len = socket_receive_timeout(cdata->fd, buffer, sizeof(buffer), 0, 5000);
 		if (recv_len <= 0) {
 			if (recv_len == 0) {
 				// try again
@@ -106,7 +106,7 @@ void *run_ctos_loop(void *arg)
 		} else {
 			//	    printf("pulled %d bytes from client\n", recv_len);
 			// send to local socket
-			sent = send_buf(cdata->sfd, buffer, recv_len);
+			sent = socket_send(cdata->sfd, buffer, recv_len);
 			if (sent < recv_len) {
 				if (sent <= 0) {
 					asl_log(asl, log_msg, ASL_LEVEL_ERR, "send failed: (%d) %m", errno);
