@@ -199,7 +199,7 @@ static int receive_packet(int sfd, struct usbmuxd_header *header, void **payload
 
 		plist_t node = plist_dict_get_item(plist, "MessageType");
 		if (!node || plist_get_node_type(node) != PLIST_STRING) {
-			*payload = plist;
+			*payload = (void *)plist;
 			hdr.length = sizeof(hdr);
 			memcpy(header, &hdr, sizeof(hdr));
 			return hdr.length;
@@ -272,7 +272,7 @@ static int receive_packet(int sfd, struct usbmuxd_header *header, void **payload
 /**
  * Retrieves the result code to a previously sent request.
  */
-static int usbmuxd_get_result(int sfd, uint32_t tag, uint32_t *result, void **result_plist)
+static int usbmuxd_get_result(int sfd, uint32_t tag, uint32_t *result, plist_t *result_plist)
 {
 	struct usbmuxd_header hdr;
 	int recv_len;
