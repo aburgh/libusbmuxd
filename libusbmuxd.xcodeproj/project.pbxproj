@@ -13,10 +13,10 @@
 		96F87257181DD65F00EE8AF6 /* collection.h in Headers */ = {isa = PBXBuildFile; fileRef = 96F87250181DD65F00EE8AF6 /* collection.h */; };
 		96F87258181DD65F00EE8AF6 /* libusbmuxd.c in Sources */ = {isa = PBXBuildFile; fileRef = 96F87251181DD65F00EE8AF6 /* libusbmuxd.c */; };
 		96F87259181DD65F00EE8AF6 /* libusbmuxd.c in Sources */ = {isa = PBXBuildFile; fileRef = 96F87251181DD65F00EE8AF6 /* libusbmuxd.c */; };
-		96F8725A181DD65F00EE8AF6 /* sock_stuff.c in Sources */ = {isa = PBXBuildFile; fileRef = 96F87252181DD65F00EE8AF6 /* sock_stuff.c */; };
-		96F8725B181DD65F00EE8AF6 /* sock_stuff.c in Sources */ = {isa = PBXBuildFile; fileRef = 96F87252181DD65F00EE8AF6 /* sock_stuff.c */; };
-		96F8725C181DD65F00EE8AF6 /* sock_stuff.h in Headers */ = {isa = PBXBuildFile; fileRef = 96F87253181DD65F00EE8AF6 /* sock_stuff.h */; };
-		96F8725D181DD65F00EE8AF6 /* sock_stuff.h in Headers */ = {isa = PBXBuildFile; fileRef = 96F87253181DD65F00EE8AF6 /* sock_stuff.h */; };
+		96F8725A181DD65F00EE8AF6 /* socket.c in Sources */ = {isa = PBXBuildFile; fileRef = 96F87252181DD65F00EE8AF6 /* socket.c */; };
+		96F8725B181DD65F00EE8AF6 /* socket.c in Sources */ = {isa = PBXBuildFile; fileRef = 96F87252181DD65F00EE8AF6 /* socket.c */; };
+		96F8725C181DD65F00EE8AF6 /* socket.h in Headers */ = {isa = PBXBuildFile; fileRef = 96F87253181DD65F00EE8AF6 /* socket.h */; };
+		96F8725D181DD65F00EE8AF6 /* socket.h in Headers */ = {isa = PBXBuildFile; fileRef = 96F87253181DD65F00EE8AF6 /* socket.h */; };
 		96F8725E181DD6D300EE8AF6 /* usbmuxd.h in Headers */ = {isa = PBXBuildFile; fileRef = 96F8723C181DD5B000EE8AF6 /* usbmuxd.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		96F8725F181DD6DE00EE8AF6 /* usbmuxd.h in Headers */ = {isa = PBXBuildFile; fileRef = 96F8723C181DD5B000EE8AF6 /* usbmuxd.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		96F87268181DDF7B00EE8AF6 /* plist.c in Sources */ = {isa = PBXBuildFile; fileRef = 96F87267181DDF7B00EE8AF6 /* plist.c */; };
@@ -90,8 +90,8 @@
 		96F8724F181DD65F00EE8AF6 /* collection.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = collection.c; sourceTree = "<group>"; };
 		96F87250181DD65F00EE8AF6 /* collection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = collection.h; sourceTree = "<group>"; };
 		96F87251181DD65F00EE8AF6 /* libusbmuxd.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = libusbmuxd.c; sourceTree = "<group>"; };
-		96F87252181DD65F00EE8AF6 /* sock_stuff.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sock_stuff.c; sourceTree = "<group>"; };
-		96F87253181DD65F00EE8AF6 /* sock_stuff.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sock_stuff.h; sourceTree = "<group>"; };
+		96F87252181DD65F00EE8AF6 /* socket.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = socket.c; sourceTree = "<group>"; };
+		96F87253181DD65F00EE8AF6 /* socket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = socket.h; sourceTree = "<group>"; };
 		96F87267181DDF7B00EE8AF6 /* plist.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = plist.c; sourceTree = "<group>"; };
 		96F8726A181DDF9800EE8AF6 /* plist.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = plist.h; sourceTree = "<group>"; };
 		96F87270181DEBCD00EE8AF6 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
@@ -170,8 +170,8 @@
 				96F87251181DD65F00EE8AF6 /* libusbmuxd.c */,
 				96F87250181DD65F00EE8AF6 /* collection.h */,
 				96F8724F181DD65F00EE8AF6 /* collection.c */,
-				96F87253181DD65F00EE8AF6 /* sock_stuff.h */,
-				96F87252181DD65F00EE8AF6 /* sock_stuff.c */,
+				96F87253181DD65F00EE8AF6 /* socket.h */,
+				96F87252181DD65F00EE8AF6 /* socket.c */,
 			);
 			path = src;
 			sourceTree = "<group>";
@@ -235,7 +235,7 @@
 				96F8725E181DD6D300EE8AF6 /* usbmuxd.h in Headers */,
 				96F8726B181DDF9800EE8AF6 /* plist.h in Headers */,
 				96F87256181DD65F00EE8AF6 /* collection.h in Headers */,
-				96F8725C181DD65F00EE8AF6 /* sock_stuff.h in Headers */,
+				96F8725C181DD65F00EE8AF6 /* socket.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -246,7 +246,7 @@
 				96F8725F181DD6DE00EE8AF6 /* usbmuxd.h in Headers */,
 				96F8726C181DDF9800EE8AF6 /* plist.h in Headers */,
 				96F87257181DD65F00EE8AF6 /* collection.h in Headers */,
-				96F8725D181DD65F00EE8AF6 /* sock_stuff.h in Headers */,
+				96F8725D181DD65F00EE8AF6 /* socket.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -359,7 +359,7 @@
 			files = (
 				96F87258181DD65F00EE8AF6 /* libusbmuxd.c in Sources */,
 				96F87254181DD65F00EE8AF6 /* collection.c in Sources */,
-				96F8725A181DD65F00EE8AF6 /* sock_stuff.c in Sources */,
+				96F8725A181DD65F00EE8AF6 /* socket.c in Sources */,
 				96F87268181DDF7B00EE8AF6 /* plist.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -371,7 +371,7 @@
 				96F87269181DDF7B00EE8AF6 /* plist.c in Sources */,
 				96F87259181DD65F00EE8AF6 /* libusbmuxd.c in Sources */,
 				96F87255181DD65F00EE8AF6 /* collection.c in Sources */,
-				96F8725B181DD65F00EE8AF6 /* sock_stuff.c in Sources */,
+				96F8725B181DD65F00EE8AF6 /* socket.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
