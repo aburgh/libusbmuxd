@@ -71,7 +71,7 @@ plist_t plist_new_array(void)
  */
 plist_t plist_new_string(const char *val)
 {
-	return CFStringCreateWithCString(kCFAllocatorDefault, val, kCFStringEncodingUTF8);
+	return (plist_t) CFStringCreateWithCString(kCFAllocatorDefault, val, kCFStringEncodingUTF8);
 }
 
 /**
@@ -83,7 +83,7 @@ plist_t plist_new_string(const char *val)
  */
 plist_t plist_new_bool(uint8_t val)
 {
-	return val ? kCFBooleanTrue : kCFBooleanFalse;
+	return (plist_t) (val ? kCFBooleanTrue : kCFBooleanFalse);
 }
 
 /**
@@ -95,7 +95,7 @@ plist_t plist_new_bool(uint8_t val)
  */
 plist_t plist_new_uint(uint64_t val)
 {
-	return CFNumberCreate(kCFAllocatorDefault, kCFNumberLongLongType, &val);
+	return (plist_t) CFNumberCreate(kCFAllocatorDefault, kCFNumberLongLongType, &val);
 }
 
 /**
@@ -107,7 +107,7 @@ plist_t plist_new_uint(uint64_t val)
  */
 plist_t plist_new_real(double val)
 {
-	return CFNumberCreate(kCFAllocatorDefault, kCFNumberDoubleType, &val);
+	return (plist_t) CFNumberCreate(kCFAllocatorDefault, kCFNumberDoubleType, &val);
 }
 
 /**
@@ -120,7 +120,7 @@ plist_t plist_new_real(double val)
  */
 plist_t plist_new_data(const char *val, uint64_t length)
 {
-	return CFDataCreate(kCFAllocatorDefault, (UInt8 *)val, length);
+	return (plist_t) CFDataCreate(kCFAllocatorDefault, (UInt8 *)val, length);
 }
 
 /**
@@ -141,7 +141,7 @@ plist_t plist_new_date(int32_t sec, int32_t usec)
 	CFAbsoluteTime abstime = (CFAbsoluteTime) sec + (CFAbsoluteTime) usec / 100000.0;
 	abstime -= 978307200.0;
 
-	return CFDateCreate(kCFAllocatorDefault, abstime);
+	return (plist_t) CFDateCreate(kCFAllocatorDefault, abstime);
 }
 
 /**
@@ -163,7 +163,7 @@ void plist_free(plist_t plist)
  */
 plist_t plist_copy(plist_t node)
 {
-	return CFPropertyListCreateDeepCopy(kCFAllocatorDefault, node, kCFPropertyListMutableContainers);
+	return (plist_t) CFPropertyListCreateDeepCopy(kCFAllocatorDefault, node, kCFPropertyListMutableContainers);
 }
 
 
@@ -193,7 +193,7 @@ uint32_t plist_array_get_size(plist_t node)
  */
 plist_t plist_array_get_item(plist_t node, uint32_t n)
 {
-	return CFArrayGetValueAtIndex(node, n);
+	return (plist_t) CFArrayGetValueAtIndex(node, n);
 }
 
 /**
@@ -345,7 +345,7 @@ void plist_dict_next_item(plist_t node, plist_dict_iter iter, char **key, plist_
 			*key = keyData;
 		}
 		if (val)
-			*val = myiter->pairs[myiter->index][1];
+			*val = (plist_t) myiter->pairs[myiter->index][1];
 
 		myiter->index += 1;
 	}
@@ -382,7 +382,7 @@ plist_t plist_dict_get_item(plist_t node, const char* key)
 		retval = CFDictionaryGetValue(node, keyRef);
 		CFRelease(keyRef);
 	}
-	return retval;
+	return (plist_t) retval;
 }
 
 /**
@@ -798,7 +798,7 @@ void plist_from_xml(const char *plist_xml, uint32_t length, plist_t * plist)
 	
 	CFDataRef data = CFDataCreate(kCFAllocatorDefault, (UInt8 *)plist_xml, length);
 	if (data) {
-		*plist = CFPropertyListCreateFromXMLData(kCFAllocatorDefault, data, kCFPropertyListMutableContainers, NULL);
+		*plist = (plist_t) CFPropertyListCreateFromXMLData(kCFAllocatorDefault, data, kCFPropertyListMutableContainers, NULL);
 		CFRelease(data);
 	}
 }
@@ -816,7 +816,7 @@ void plist_from_bin(const char *plist_bin, uint32_t length, plist_t * plist)
 	
 	CFDataRef data = CFDataCreate(kCFAllocatorDefault, (UInt8 *)plist_bin, length);
 	if (data) {
-		*plist = CFPropertyListCreateWithData(kCFAllocatorDefault, data, kCFPropertyListMutableContainers, NULL, NULL);
+		*plist = (plist_t) CFPropertyListCreateWithData(kCFAllocatorDefault, data, kCFPropertyListMutableContainers, NULL, NULL);
 		CFRelease(data);
 	}
 }

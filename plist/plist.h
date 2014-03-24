@@ -64,8 +64,7 @@ extern "C"
     /**
      * The basic plist abstract data type.
      */
-//    typedef void *plist_t;
-	typedef CFTypeRef plist_t;
+    typedef void *plist_t;
 	
     /**
      * The plist dictionary iterator.
