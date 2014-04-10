@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9686307B18F70D3200C0363C /* libplist.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9686307A18F70D3200C0363C /* libplist.a */; };
+		9686307D18F70D4D00C0363C /* libplist.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9686307C18F70D4D00C0363C /* libplist.dylib */; };
 		96F87254181DD65F00EE8AF6 /* collection.c in Sources */ = {isa = PBXBuildFile; fileRef = 96F8724F181DD65F00EE8AF6 /* collection.c */; };
 		96F87255181DD65F00EE8AF6 /* collection.c in Sources */ = {isa = PBXBuildFile; fileRef = 96F8724F181DD65F00EE8AF6 /* collection.c */; };
 		96F87256181DD65F00EE8AF6 /* collection.h in Headers */ = {isa = PBXBuildFile; fileRef = 96F87250181DD65F00EE8AF6 /* collection.h */; };
@@ -19,10 +21,6 @@
 		96F8725D181DD65F00EE8AF6 /* socket.h in Headers */ = {isa = PBXBuildFile; fileRef = 96F87253181DD65F00EE8AF6 /* socket.h */; };
 		96F8725E181DD6D300EE8AF6 /* usbmuxd.h in Headers */ = {isa = PBXBuildFile; fileRef = 96F8723C181DD5B000EE8AF6 /* usbmuxd.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		96F8725F181DD6DE00EE8AF6 /* usbmuxd.h in Headers */ = {isa = PBXBuildFile; fileRef = 96F8723C181DD5B000EE8AF6 /* usbmuxd.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		96F87268181DDF7B00EE8AF6 /* plist.c in Sources */ = {isa = PBXBuildFile; fileRef = 96F87267181DDF7B00EE8AF6 /* plist.c */; };
-		96F87269181DDF7B00EE8AF6 /* plist.c in Sources */ = {isa = PBXBuildFile; fileRef = 96F87267181DDF7B00EE8AF6 /* plist.c */; };
-		96F8726B181DDF9800EE8AF6 /* plist.h in Headers */ = {isa = PBXBuildFile; fileRef = 96F8726A181DDF9800EE8AF6 /* plist.h */; };
-		96F8726C181DDF9800EE8AF6 /* plist.h in Headers */ = {isa = PBXBuildFile; fileRef = 96F8726A181DDF9800EE8AF6 /* plist.h */; };
 		96F87271181DEBCD00EE8AF6 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96F87270181DEBCD00EE8AF6 /* CoreFoundation.framework */; };
 		96F87288181E68AD00EE8AF6 /* iproxy.c in Sources */ = {isa = PBXBuildFile; fileRef = 96F87287181E68AD00EE8AF6 /* iproxy.c */; };
 		96F87289181E68FA00EE8AF6 /* libusbmuxd.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 96F87242181DD60900EE8AF6 /* libusbmuxd.a */; };
@@ -83,6 +81,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		9686307A18F70D3200C0363C /* libplist.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libplist.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		9686307C18F70D4D00C0363C /* libplist.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libplist.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		96F8723B181DD5B000EE8AF6 /* usbmuxd-proto.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "usbmuxd-proto.h"; sourceTree = "<group>"; };
 		96F8723C181DD5B000EE8AF6 /* usbmuxd.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = usbmuxd.h; sourceTree = "<group>"; };
 		96F87242181DD60900EE8AF6 /* libusbmuxd.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libusbmuxd.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -92,8 +92,6 @@
 		96F87251181DD65F00EE8AF6 /* libusbmuxd.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = libusbmuxd.c; sourceTree = "<group>"; };
 		96F87252181DD65F00EE8AF6 /* socket.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = socket.c; sourceTree = "<group>"; };
 		96F87253181DD65F00EE8AF6 /* socket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = socket.h; sourceTree = "<group>"; };
-		96F87267181DDF7B00EE8AF6 /* plist.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = plist.c; sourceTree = "<group>"; };
-		96F8726A181DDF9800EE8AF6 /* plist.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = plist.h; sourceTree = "<group>"; };
 		96F87270181DEBCD00EE8AF6 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
 		96F87274181E680700EE8AF6 /* AUTHORS */ = {isa = PBXFileReference; lastKnownFileType = text; path = AUTHORS; sourceTree = "<group>"; };
 		96F87275181E680700EE8AF6 /* COPYING.LGPLv2.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = COPYING.LGPLv2.1; sourceTree = "<group>"; };
@@ -111,6 +109,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9686307B18F70D3200C0363C /* libplist.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -118,6 +117,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9686307D18F70D4D00C0363C /* libplist.dylib in Frameworks */,
 				96F87271181DEBCD00EE8AF6 /* CoreFoundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -149,7 +149,6 @@
 				96F8723A181DD58A00EE8AF6 /* include */,
 				96F8723D181DD5CE00EE8AF6 /* src */,
 				96F87286181E689100EE8AF6 /* tools */,
-				96F8726D181DDFD100EE8AF6 /* plist */,
 				96F87272181DEBD400EE8AF6 /* Libraries and Frameworks */,
 				96F87243181DD60900EE8AF6 /* Products */,
 			);
@@ -187,18 +186,11 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		96F8726D181DDFD100EE8AF6 /* plist */ = {
-			isa = PBXGroup;
-			children = (
-				96F8726A181DDF9800EE8AF6 /* plist.h */,
-				96F87267181DDF7B00EE8AF6 /* plist.c */,
-			);
-			path = plist;
-			sourceTree = "<group>";
-		};
 		96F87272181DEBD400EE8AF6 /* Libraries and Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				9686307A18F70D3200C0363C /* libplist.a */,
+				9686307C18F70D4D00C0363C /* libplist.dylib */,
 				96F87270181DEBCD00EE8AF6 /* CoreFoundation.framework */,
 			);
 			name = "Libraries and Frameworks";
@@ -233,7 +225,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				96F8725E181DD6D300EE8AF6 /* usbmuxd.h in Headers */,
-				96F8726B181DDF9800EE8AF6 /* plist.h in Headers */,
 				96F87256181DD65F00EE8AF6 /* collection.h in Headers */,
 				96F8725C181DD65F00EE8AF6 /* socket.h in Headers */,
 			);
@@ -244,7 +235,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				96F8725F181DD6DE00EE8AF6 /* usbmuxd.h in Headers */,
-				96F8726C181DDF9800EE8AF6 /* plist.h in Headers */,
 				96F87257181DD65F00EE8AF6 /* collection.h in Headers */,
 				96F8725D181DD65F00EE8AF6 /* socket.h in Headers */,
 			);
@@ -360,7 +350,6 @@
 				96F87258181DD65F00EE8AF6 /* libusbmuxd.c in Sources */,
 				96F87254181DD65F00EE8AF6 /* collection.c in Sources */,
 				96F8725A181DD65F00EE8AF6 /* socket.c in Sources */,
-				96F87268181DDF7B00EE8AF6 /* plist.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -368,7 +357,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				96F87269181DDF7B00EE8AF6 /* plist.c in Sources */,
 				96F87259181DD65F00EE8AF6 /* libusbmuxd.c in Sources */,
 				96F87255181DD65F00EE8AF6 /* collection.c in Sources */,
 				96F8725B181DD65F00EE8AF6 /* socket.c in Sources */,
