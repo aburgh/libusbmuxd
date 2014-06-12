@@ -179,8 +179,16 @@ static int receive_packet(int sfd, struct usbmuxd_header *header, void **payload
 	uint32_t payload_size = hdr.length - sizeof(hdr);
 	if (payload_size > 0) {
 		payload_loc = (char*)malloc(payload_size);
-		if (socket_receive_timeout(sfd, payload_loc, payload_size, 0, 5000) != (int)payload_size) {
-			DEBUG(1, "%s: Error receiving payload of size %d\n", __func__, payload_size);
+		uint32_t rsize = 0;
+		do {
+			int res = socket_receive_timeout(sfd, payload_loc + rsize, payload_size - rsize, 0, 5000);
+			if (res < 0) {
+				break;
+			}
+			rsize += res;
+		} while (rsize < payload_size);
+		if (rsize != payload_size) {
+			DEBUG(1, "%s: Error receiving payload of size %d (bytes received: %d)\n", __func__, payload_size, rsize);
 			free(payload_loc);
 			return -EBADMSG;
 		}
@@ -287,10 +295,10 @@ static int usbmuxd_get_result(int sfd, uint32_t tag, uint32_t *result, plist_t *
 	}
 
 	if ((recv_len = receive_packet(sfd, &hdr, (void**)&res, 5000)) < 0) {
-		DEBUG(1, "%s: Error receiving packet: %d\n", __func__, errno);
+		DEBUG(1, "%s: Error receiving packet: %d\n", __func__, recv_len);
 		if (res)
 			free(res);
-		return -errno;
+		return recv_len;
 	}
 	if ((size_t)recv_len < sizeof(hdr)) {
 		DEBUG(1, "%s: Received packet is too small!\n", __func__);
@@ -344,10 +352,18 @@ static int send_packet(int sfd, uint32_t message, uint32_t tag, void *payload, u
 		return -1;
 	}
 	if (payload && (payload_size > 0)) {
-		sent += socket_send(sfd, payload, payload_size);
+		uint32_t ssize = 0;
+		do {
+			int res = socket_send(sfd, (char*)payload + ssize, payload_size - ssize);
+			if (res < 0) {
+				break;
+			}
+			ssize += res;
+		} while (ssize < payload_size);
+		sent += ssize;
 	}
 	if (sent != (int)header.length) {
-		DEBUG(1, "%s: ERROR: could not send whole packet\n", __func__);
+		DEBUG(1, "%s: ERROR: could not send whole packet (sent %d of %d)\n", __func__, sent, header.length);
 		socket_close(sfd);
 		return -1;
 	}
@@ -594,7 +610,7 @@ retry:
 		socket_close(sfd);
 		return -1;
 	}
-	if (usbmuxd_get_result(sfd, tag, &res, NULL) && (res != 0)) {
+	if ((usbmuxd_get_result(sfd, tag, &res, NULL) == 1) && (res != 0)) {
 		socket_close(sfd);
 		if ((res == RESULT_BADVERSION) && (proto_version == 1)) {
 			proto_version = 0;
@@ -603,7 +619,6 @@ retry:
 		DEBUG(1, "%s: ERROR: did not get OK but %d\n", __func__, res);
 		return -1;
 	}
-
 	return sfd;
 }
 
@@ -818,7 +833,7 @@ retry:
 	if ((proto_version == 1) && (try_list_devices)) {
 		if (send_list_devices_packet(sfd, tag) > 0) {
 			plist_t list = NULL;
-			if (usbmuxd_get_result(sfd, tag, &res, &list) && (res == 0)) {
+			if ((usbmuxd_get_result(sfd, tag, &res, &list) == 1) && (res == 0)) {
 				plist_t devlist = plist_dict_get_item(list, "DeviceList");
 				if (devlist && plist_get_node_type(devlist) == PLIST_ARRAY) {
 					collection_init(&tmpdevs);
@@ -831,6 +846,7 @@ retry:
 						usbmuxd_device_info_t *devinfo = device_info_from_device_record(dev);
 						free(dev);
 						if (!devinfo) {
+							socket_close(sfd);
 							DEBUG(1, "%s: can't create device info object\n", __func__);
 							plist_free(list);
 							return -1;
@@ -857,7 +873,7 @@ retry:
 	if (send_listen_packet(sfd, tag) > 0) {
 		res = -1;
 		// get response
-		if (usbmuxd_get_result(sfd, tag, &res, NULL) && (res == 0)) {
+		if ((usbmuxd_get_result(sfd, tag, &res, NULL) == 1) && (res == 0)) {
 			listen_success = 1;
 		} else {
 			socket_close(sfd);
@@ -871,6 +887,7 @@ retry:
 	}
 
 	if (!listen_success) {
+		socket_close(sfd);
 		DEBUG(1, "%s: Could not send listen request!\n", __func__);
 		return -1;
 	}
@@ -885,6 +902,7 @@ retry:
 
 				usbmuxd_device_info_t *devinfo = device_info_from_device_record(dev);
 				if (!devinfo) {
+					socket_close(sfd);
 					DEBUG(1, "%s: can't create device info object\n", __func__);
 					free(payload);
 					return -1;
@@ -1006,7 +1024,7 @@ retry:
 	} else {
 		// read ACK
 		DEBUG(2, "%s: Reading connect result...\n", __func__);
-		if (usbmuxd_get_result(sfd, tag, &res, NULL)) {
+		if (usbmuxd_get_result(sfd, tag, &res, NULL) == 1) {
 			if (res == 0) {
 				DEBUG(2, "%s: Connect success!\n", __func__);
 				connected = 1;
@@ -1100,16 +1118,18 @@ int usbmuxd_read_buid(char **buid)
 	} else {
 		uint32_t rc = 0;
 		plist_t pl = NULL;
-		if (usbmuxd_get_result(sfd, tag, &rc, &pl) && (rc == 0)) {
+		ret = usbmuxd_get_result(sfd, tag, &rc, &pl);
+		if ((ret == 1) && (rc == 0)) {
 			plist_t node = plist_dict_get_item(pl, "BUID");
 			if (node && plist_get_node_type(node) == PLIST_STRING) {
 				plist_get_string_val(node, buid);
 			}
-		} else {
+		} else if (ret == 1) {
 			ret = -(int)rc;
 		}
 		plist_free(pl);
 	}
+	socket_close(sfd);
 
 	return ret;
 }
@@ -1141,7 +1161,8 @@ int usbmuxd_read_pair_record(const char* record_id, char **record_data, uint32_t
 	} else {
 		uint32_t rc = 0;
 		plist_t pl = NULL;
-		if (usbmuxd_get_result(sfd, tag, &rc, &pl) && (rc == 0)) {
+		ret = usbmuxd_get_result(sfd, tag, &rc, &pl);
+		if ((ret == 1) && (rc == 0)) {
 			plist_t node = plist_dict_get_item(pl, "PairRecordData");
 			if (node && plist_get_node_type(node) == PLIST_DATA) {
 				uint64_t int64val = 0;
@@ -1151,11 +1172,12 @@ int usbmuxd_read_pair_record(const char* record_id, char **record_data, uint32_t
 					ret = 0;
 				}
 			}
-		} else {
+		} else if (ret == 1) {
 			ret = -(int)rc;
 		}
 		plist_free(pl);
 	}
+	socket_close(sfd);
 
 	return ret;
 }
@@ -1185,14 +1207,16 @@ int usbmuxd_save_pair_record(const char* record_id, const char *record_data, uin
 		DEBUG(1, "%s: Error sending SavePairRecord message!\n", __func__);
 	} else {
 		uint32_t rc = 0;
-		if (usbmuxd_get_result(sfd, tag, &rc, NULL) && (rc == 0)) {
+		ret = usbmuxd_get_result(sfd, tag, &rc, NULL);
+		if ((ret == 1) && (rc == 0)) {
 			ret = 0;
-		} else {
+		} else if (ret == 1) {
 			ret = -(int)rc;
 			DEBUG(1, "%s: Error: saving pair record failed: %d\n", __func__, ret);
 		}
 	}
 	plist_free(data);
+	socket_close(sfd);
 
 	return ret;
 }
@@ -1221,13 +1245,15 @@ int usbmuxd_delete_pair_record(const char* record_id)
 		DEBUG(1, "%s: Error sending DeletePairRecord message!\n", __func__);
 	} else {
 		uint32_t rc = 0;
-		if (usbmuxd_get_result(sfd, tag, &rc, NULL) && (rc == 0)) {
+		ret = usbmuxd_get_result(sfd, tag, &rc, NULL);
+		if ((ret == 1) && (rc == 0)) {
 			ret = 0;
-		} else {
+		} else if (ret == 1) {
 			ret = -(int)rc;
 			DEBUG(1, "%s: Error: deleting pair record failed: %d\n", __func__, ret);
 		}
 	}
+	socket_close(sfd);
 
 	return ret;
 }
