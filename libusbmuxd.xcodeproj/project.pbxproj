@@ -142,11 +142,23 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		96AFF4ED19E1F82E00086CBA /* common */ = {
+			isa = PBXGroup;
+			children = (
+				96F87250181DD65F00EE8AF6 /* collection.h */,
+				96F8724F181DD65F00EE8AF6 /* collection.c */,
+				96F87253181DD65F00EE8AF6 /* socket.h */,
+				96F87252181DD65F00EE8AF6 /* socket.c */,
+			);
+			path = common;
+			sourceTree = "<group>";
+		};
 		96F87233181DD53600EE8AF6 = {
 			isa = PBXGroup;
 			children = (
 				96F87273181E67D400EE8AF6 /* doc */,
 				96F8723A181DD58A00EE8AF6 /* include */,
+				96AFF4ED19E1F82E00086CBA /* common */,
 				96F8723D181DD5CE00EE8AF6 /* src */,
 				96F87286181E689100EE8AF6 /* tools */,
 				96F87272181DEBD400EE8AF6 /* Libraries and Frameworks */,
@@ -167,10 +179,6 @@
 			isa = PBXGroup;
 			children = (
 				96F87251181DD65F00EE8AF6 /* libusbmuxd.c */,
-				96F87250181DD65F00EE8AF6 /* collection.h */,
-				96F8724F181DD65F00EE8AF6 /* collection.c */,
-				96F87253181DD65F00EE8AF6 /* socket.h */,
-				96F87252181DD65F00EE8AF6 /* socket.c */,
 			);
 			path = src;
 			sourceTree = "<group>";
