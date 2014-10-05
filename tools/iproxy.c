@@ -1,23 +1,23 @@
 /*
  * iproxy.c -- proxy that enables tcp service access to iOS devices
- * 
+ *
  * Copyright (C) 2014	Martin Szulecki <m.szulecki@libimobiledevice.org>
  * Copyright (C) 2009	Nikias Bassen <nikias@gmx.li>
  * Copyright (C) 2009	Paul Sladen <libiphone@paul.sladen.org>
- * 
+ *
  * Based upon iTunnel source code, Copyright (c) 2008 Jing Su.
  * http://www.cs.toronto.edu/~jingsu/itunnel/
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
@@ -46,6 +46,7 @@ typedef unsigned int socklen_t;
 
 static uint16_t listen_port = 0;
 static uint16_t device_port = 0;
+static char* device_udid = NULL;
 
 struct client_data {
 	int fd;
@@ -70,7 +71,7 @@ static void *run_stoc_loop(void *arg)
 				// try again
 				continue;
 			} else {
-				fprintf(stderr, "recv failed: %s\n", strerror(errno));
+				fprintf(stderr, "recv failed: %s\n", strerror(-recv_len));
 				break;
 			}
 		} else {
@@ -87,7 +88,7 @@ static void *run_stoc_loop(void *arg)
 		}
 	}
 
-	close(cdata->fd);
+	socket_close(cdata->fd);
 
 	cdata->fd = -1;
 	cdata->stop_ctos = 1;
@@ -123,7 +124,7 @@ static void *run_ctos_loop(void *arg)
 				// try again
 				continue;
 			} else {
-			fprintf(stderr, "recv failed: %s\n", strerror(errno));
+				fprintf(stderr, "recv failed: %s\n", strerror(-recv_len));
 				break;
 			}
 		} else {
@@ -140,7 +141,7 @@ static void *run_ctos_loop(void *arg)
 		}
 	}
 
-	close(cdata->fd);
+	socket_close(cdata->fd);
 
 	cdata->fd = -1;
 	cdata->stop_stoc = 1;
@@ -175,6 +176,10 @@ static void *acceptor_thread(void *arg)
 	if ((count = usbmuxd_get_device_list(&dev_list)) < 0) {
 		printf("Connecting to usbmuxd failed, terminating.\n");
 		free(dev_list);
+		if (cdata->fd > 0) {
+			socket_close(cdata->fd);
+		}
+		free(cdata);
 		return NULL;
 	}
 
@@ -183,12 +188,39 @@ static void *acceptor_thread(void *arg)
 	if (dev_list == NULL || dev_list[0].handle == 0) {
 		printf("No connected device found, terminating.\n");
 		free(dev_list);
+		if (cdata->fd > 0) {
+			socket_close(cdata->fd);
+		}
+		free(cdata);
 		return NULL;
 	}
 
-	fprintf(stdout, "Requesting connecion to device handle == %d (serial: %s), port %d\n", dev_list[0].handle, dev_list[0].udid, device_port);
+	usbmuxd_device_info_t *dev = NULL;
+	if (device_udid) {
+		int i;
+		for (i = 0; i < count; i++) {
+			if (strncmp(dev_list[i].udid, device_udid, sizeof(dev_list[0].udid)) == 0) {
+				dev = &(dev_list[i]);
+				break;
+			}
+		}
+	} else {
+		dev = &(dev_list[0]);
+	}
 
-	cdata->sfd = usbmuxd_connect(dev_list[0].handle, device_port);
+	if (dev == NULL || dev->handle == 0) {
+		printf("No connected/matching device found, disconnecting client.\n");
+		free(dev_list);
+		if (cdata->fd > 0) {
+			socket_close(cdata->fd);
+		}
+		free(cdata);
+		return NULL;
+	}
+
+	fprintf(stdout, "Requesting connecion to device handle == %d (serial: %s), port %d\n", dev->handle, dev->udid, device_port);
+
+	cdata->sfd = usbmuxd_connect(dev->handle, device_port);
 	free(dev_list);
 	if (cdata->sfd < 0) {
 		fprintf(stderr, "Error connecting to device!\n");
@@ -205,11 +237,12 @@ static void *acceptor_thread(void *arg)
 	}
 
 	if (cdata->fd > 0) {
-		close(cdata->fd);
+		socket_close(cdata->fd);
 	}
 	if (cdata->sfd > 0) {
-		close(cdata->sfd);
+		socket_close(cdata->sfd);
 	}
+	free(cdata);
 
 	return NULL;
 }
@@ -218,13 +251,17 @@ int main(int argc, char **argv)
 {
 	int mysock = -1;
 
-	if (argc != 3) {
-		printf("usage: %s LOCAL_TCP_PORT DEVICE_TCP_PORT\n", argv[0]);
+	if (argc < 3) {
+		printf("usage: %s LOCAL_TCP_PORT DEVICE_TCP_PORT [UDID]\n", argv[0]);
 		return 0;
 	}
 
 	listen_port = atoi(argv[1]);
 	device_port = atoi(argv[2]);
+
+	if (argc > 3) {
+		device_udid = argv[3];
+	}
 
 	if (!listen_port) {
 		fprintf(stderr, "Invalid listen_port specified!\n");
@@ -247,29 +284,33 @@ int main(int argc, char **argv)
 #else
 		pthread_t acceptor;
 #endif
-		struct sockaddr_in c_addr;
-		socklen_t len = sizeof(struct sockaddr_in);
-		struct client_data cdata;
+		struct client_data *cdata;
 		int c_sock;
 		while (1) {
 			printf("waiting for connection\n");
-			c_sock = accept(mysock, (struct sockaddr*)&c_addr, &len);
+			c_sock = socket_accept(mysock, listen_port);
 			if (c_sock) {
 				printf("accepted connection, fd = %d\n", c_sock);
-				cdata.fd = c_sock;
+				cdata = (struct client_data*)malloc(sizeof(struct client_data));
+				if (!cdata) {
+					socket_close(c_sock);
+					fprintf(stderr, "ERROR: Out of memory\n");
+					return -1;
+				}
+				cdata->fd = c_sock;
 #ifdef WIN32
-				acceptor = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)acceptor_thread, &cdata, 0, NULL);
-				WaitForSingleObject(acceptor, INFINITE);
+				acceptor = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)acceptor_thread, cdata, 0, NULL);
+				CloseHandle(acceptor);
 #else
-				pthread_create(&acceptor, NULL, acceptor_thread, &cdata);
-				pthread_join(acceptor, NULL);
+				pthread_create(&acceptor, NULL, acceptor_thread, cdata);
+				pthread_detach(acceptor);
 #endif
 			} else {
 				break;
 			}
 		}
-		close(c_sock);
-		close(mysock);
+		socket_close(c_sock);
+		socket_close(mysock);
 	}
 
 	return 0;

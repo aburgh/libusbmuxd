@@ -1,28 +1,27 @@
 /*
-	libusbmuxd - client library to talk to usbmuxd
+ * usbmuxd.h - A client library to talk to the usbmuxd daemon.
+ *
+ * Copyright (C) 2014 Martin Szulecki <m.szulecki@libimobiledevice.org>
+ * Copyright (C) 2009 Nikias Bassen <nikias@gmx.li>
+ * Copyright (C) 2009 Paul Sladen <libiphone@paul.sladen.org>
+ *
+ * This library is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 2.1 of the
+ * License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
 
-Copyright (C) 2009	Nikias Bassen <nikias@gmx.li>
-Copyright (C) 2009	Paul Sladen <libiphone@paul.sladen.org>
-Copyright (C) 2009	Martin Szulecki <opensuse@sukimashita.com>
-
-This library is free software; you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as
-published by the Free Software Foundation, either version 2.1 of the
-License, or (at your option) any later version.
-
-This library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public
-License along with this program; if not, write to the Free Software
-Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
-
-*/
-
-#ifndef __USBMUXD_H
-#define __USBMUXD_H
+#ifndef USBMUXD_H
+#define USBMUXD_H
 #include <stdint.h>
 
 #ifdef __cplusplus
@@ -231,4 +230,4 @@ void libusbmuxd_set_debug_level(int level);
 }
 #endif
 
-#endif /* __USBMUXD_H */
+#endif /* USBMUXD_H */
