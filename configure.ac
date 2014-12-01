@@ -2,8 +2,8 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.61)
-AC_INIT(libusbmuxd, 1.0.10, nospam@nowhere.com)
-AM_INIT_AUTOMAKE([dist-bzip2 no-dist-gzip])
+AC_INIT(libusbmuxd, 1.1.0, nospam@nowhere.com)
+AM_INIT_AUTOMAKE([dist-bzip2 no-dist-gzip check-news])
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES])
 AC_CONFIG_SRCDIR([src/])
 AC_CONFIG_HEADERS([config.h])
@@ -15,7 +15,7 @@ dnl libtool versioning
 #                 changes to the signature and the semantic)
 #  ? :+1 : ?   == just internal changes
 # CURRENT : REVISION : AGE
-LIBUSBMUXD_SO_VERSION=3:1:1
+LIBUSBMUXD_SO_VERSION=4:0:0
 
 AC_SUBST(LIBUSBMUXD_SO_VERSION)
 

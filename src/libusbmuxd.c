@@ -1,9 +1,9 @@
 /*
  * libusbmuxd.c
  *
- * Copyright (C) 2009-2010 Nikias Bassen <nikias@gmx.li>
+ * Copyright (C) 2009-2014 Martin Szulecki <m.szulecki@libimobiledevice.org>
+ * Copyright (C) 2009-2014 Nikias Bassen <nikias@gmx.li>
  * Copyright (C) 2009 Paul Sladen <libiphone@paul.sladen.org>
- * Copyright (C) 2009 Martin Szulecki <opensuse@sukimashita.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -516,7 +516,7 @@ static int usbmuxd_listen_poll()
 	sfd = connect_usbmuxd_socket();
 	if (sfd < 0) {
 		while (event_cb) {
-			if ((sfd = connect_usbmuxd_socket()) > 0) {
+			if ((sfd = connect_usbmuxd_socket()) >= 0) {
 				break;
 			}
 			sleep(1);
@@ -572,9 +572,16 @@ static int usbmuxd_listen_inotify()
 			/* check that it's ours */
 			if (pevent->mask & IN_CREATE &&
 			    pevent->len &&
-			    pevent->name != NULL &&
+			    pevent->name[0] != 0 &&
 			    strcmp(pevent->name, USBMUXD_SOCKET_NAME) == 0) {
-				sfd = connect_usbmuxd_socket ();
+				/* retry if usbmuxd isn't ready yet */
+				int retry = 10;
+				while (--retry >= 0) {
+					if ((sfd = connect_usbmuxd_socket ()) >= 0) {
+						break;
+					}
+					sleep(1);
+				}
 				goto end;
 			}
 			i += EVENT_SIZE + pevent->len;
